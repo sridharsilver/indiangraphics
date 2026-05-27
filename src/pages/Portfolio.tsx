@@ -1,7 +1,7 @@
 import { useDocumentTitle } from "../hooks/use-document-title";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, X } from "lucide-react";
 import { SectionTitle } from "../components/SectionTitle";
 import { portfolio } from "../data/site";
 
@@ -71,7 +71,7 @@ export function Portfolio() {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 pb-20 lg:px-8">
-        <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div layout className="columns-1 gap-6 sm:columns-2 lg:columns-3 [&>div]:mb-6">
           <AnimatePresence mode="popLayout">
             {items.map((p, i) => (
               <motion.div
@@ -81,24 +81,31 @@ export function Portfolio() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.35 }}
-                className="group relative overflow-hidden rounded-2xl border border-border cursor-pointer"
+                className="group relative overflow-hidden rounded-2xl border border-border bg-card cursor-pointer transition-shadow hover:shadow-xl"
                 onClick={() => setLightboxIndex(i)}
               >
-                <div className="aspect-[4/3] overflow-hidden">
+                <div className={`overflow-hidden ${i % 3 === 0 ? "aspect-[4/5]" : i % 3 === 1 ? "aspect-[4/3]" : "aspect-[3/2]"}`}>
                   <img
                     src={images[`/src/assets/portfolio/${p.image}.png`]}
                     alt={p.title}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
                   />
-                </div>
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/80 to-transparent p-5">
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-white/70">{p.category}</p>
-                    <h4 className="mt-1 font-display text-lg font-semibold text-white">
-                      {p.title}
-                    </h4>
+                  <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/30" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-background shadow-lg">
+                      <Plus size={20} />
+                    </div>
                   </div>
-                  <ArrowUpRight className="text-white" size={20} />
+                </div>
+                <div className="absolute left-3 top-3">
+                  <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-background shadow-sm">
+                    {p.category}
+                  </span>
+                </div>
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 pt-12">
+                  <h4 className="font-display text-lg font-semibold text-white">
+                    {p.title}
+                  </h4>
                 </div>
               </motion.div>
             ))}

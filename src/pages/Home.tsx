@@ -1,7 +1,7 @@
 import { useDocumentTitle } from "../hooks/use-document-title";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Check, ChevronDown, Star } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, Plus, Star } from "lucide-react";
 import { SectionTitle } from "../components/SectionTitle";
 import { Reveal } from "../components/Reveal";
 import { services, whyUs, process, testimonials, portfolio } from "../data/site";
@@ -181,25 +181,32 @@ function FeaturedWorks() {
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
       <SectionTitle eyebrow="Featured work" title="Recent projects" />
-      <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-14 columns-1 gap-6 sm:columns-2 lg:columns-3 [&>a]:mb-6 [&>div]:mb-6">
         {portfolio.slice(0, 6).map((p, i) => (
           <Reveal key={p.title} delay={i * 0.05}>
-            <div className="group relative overflow-hidden rounded-2xl border border-border">
-              <div className="aspect-[4/3] overflow-hidden">
+            <Link to="/portfolio" className="group relative overflow-hidden rounded-2xl border border-border bg-card block transition-shadow hover:shadow-xl">
+              <div className={`overflow-hidden ${i % 3 === 0 ? "aspect-[4/5]" : i % 3 === 1 ? "aspect-[4/3]" : "aspect-[3/2]"}`}>
                 <img
                   src={portfolioImages[`/src/assets/portfolio/${p.image}.png`]}
                   alt={p.title}
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
                 />
-              </div>
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/80 to-transparent p-5">
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-white/70">{p.category}</p>
-                  <h4 className="mt-1 font-display text-lg font-semibold text-white">{p.title}</h4>
+                <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/30" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-background shadow-lg">
+                    <Plus size={20} />
+                  </div>
                 </div>
-                <ArrowUpRight className="text-white" size={20} />
               </div>
-            </div>
+              <div className="absolute left-3 top-3">
+                <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-background shadow-sm">
+                  {p.category}
+                </span>
+              </div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 pt-12">
+                <h4 className="font-display text-lg font-semibold text-white">{p.title}</h4>
+              </div>
+            </Link>
           </Reveal>
         ))}
       </div>
