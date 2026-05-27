@@ -7,7 +7,7 @@ interface Message {
   text: string;
 }
 
-const RESPONSES: [RegExp, string][] = [
+const FALLBACKS: [RegExp, string][] = [
   [/print(ing)?|offset|digital/i, "We offer offset & digital printing for brochures, business cards, flyers, catalogs, and more. Want a quote?"],
   [/brand(ing)?|logo|identity/i, "Our branding services include logo design, brand identity systems, stationery, and brand guidelines. Let's build something memorable!"],
   [/packag(ing|e)|box/, "We design and manufacture custom mono-cartons, rigid boxes, and product packaging with foil, emboss, and eco materials."],
@@ -20,9 +20,9 @@ const RESPONSES: [RegExp, string][] = [
   [/thank|thanks/i, "You're welcome! Feel free to reach out anytime. 😊"],
 ];
 
-function getResponse(input: string): string {
+function fallbackResponse(input: string): string {
   const lower = input.toLowerCase();
-  for (const [pattern, reply] of RESPONSES) {
+  for (const [pattern, reply] of FALLBACKS) {
     if (pattern.test(lower)) return reply;
   }
   return "I'm not sure I follow. Could you rephrase? I can help with printing, branding, packaging, signage, quotes, and more!";
@@ -41,16 +41,28 @@ export function Chatbot() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
 
-  const send = () => {
+  const send = async () => {
     const text = input.trim();
     if (!text || typing) return;
     setInput("");
     setMessages((prev) => [...prev, { role: "user", text }]);
     setTyping(true);
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { role: "bot", text: getResponse(text) }]);
-      setTyping(false);
-    }, 600 + Math.random() * 400);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      setMessages((prev) => [...prev, { role: "bot", text: data.reply }]);
+    } catch {
+      await new Promise((r) => setTimeout(r, 400));
+      setMessages((prev) => [...prev, { role: "bot", text: fallbackResponse(text) }]);
+    }
+
+    setTyping(false);
   };
 
   return (
