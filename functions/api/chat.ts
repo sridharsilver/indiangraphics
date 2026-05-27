@@ -1,5 +1,5 @@
 interface Env {
-  AI: Ai;
+  WORKERS_AI: Ai;
 }
 
 export const onRequest: PagesFunction<Env> = async (ctx) => {
@@ -25,7 +25,7 @@ Website: https://indiangraphics.in
 Keep responses under 3 sentences unless asked for details. Be friendly and professional. If you don't know something specific, offer to connect them with the team.`;
 
   try {
-    const response = await ctx.env.AI.run("@cf/meta/llama-3-8b-instruct", {
+    const response = await ctx.env.WORKERS_AI.run("@cf/meta/llama-3-8b-instruct", {
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: message },
